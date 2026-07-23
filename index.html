@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KPCC 사진 갤러리</title>
+  <meta name="description" content="KPCC 교회 홈페이지 사진 갤러리" />
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #15346b;
+      --blue: #277ec4;
+      --gold: #f8bd3e;
+      --ink: #172033;
+      --muted: #667085;
+      --paper: #ffffff;
+      --soft: #eef6ff;
+      --line: #dbe7f4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #f7fbff 0%, #fffaf0 100%);
+    }
+    header {
+      min-height: 320px;
+      color: white;
+      padding: 52px 22px 64px;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(248,189,62,.35), transparent 30%),
+        linear-gradient(135deg, #102a58 0%, #277ec4 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      inset: auto -12% -120px -12%;
+      height: 210px;
+      background: #f7fbff;
+      border-radius: 50% 50% 0 0;
+    }
+    .mark {
+      width: 92px;
+      height: 92px;
+      border-radius: 28px;
+      margin: 0 auto 20px;
+      background: rgba(255,255,255,.16);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 22px 60px rgba(0,0,0,.22);
+      backdrop-filter: blur(8px);
+      position: relative;
+      z-index: 1;
+    }
+    .mark span {
+      font-size: 48px;
+      color: var(--gold);
+      line-height: 1;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 6vw, 4rem); letter-spacing: -.04em; position: relative; z-index: 1; }
+    .lead { max-width: 720px; margin: 16px auto 0; color: rgba(255,255,255,.86); font-size: 1.08rem; line-height: 1.7; position: relative; z-index: 1; }
+    main { max-width: 1120px; margin: -44px auto 80px; padding: 0 20px; position: relative; z-index: 2; }
+    .panel {
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(219,231,244,.92);
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(21,52,107,.12);
+      padding: 22px;
+    }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .eyebrow { color: var(--blue); font-weight: 800; letter-spacing: .08em; font-size: .78rem; text-transform: uppercase; }
+    h2 { margin: 5px 0 0; font-size: clamp(1.5rem, 3vw, 2.25rem); letter-spacing: -.03em; }
+    .count { color: var(--muted); font-size: .95rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 10px 30px rgba(21,52,107,.07);
+    }
+    .card a { display: block; color: inherit; text-decoration: none; }
+    .photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      background: var(--soft);
+    }
+    .body { padding: 14px 14px 16px; }
+    .date { color: var(--blue); font-weight: 800; font-size: .82rem; }
+    .caption { margin: 6px 0 0; color: #344054; line-height: 1.55; word-break: keep-all; }
+    .empty {
+      text-align: center;
+      padding: 70px 20px;
+      color: var(--muted);
+      border: 1px dashed #b8cce4;
+      border-radius: 24px;
+      background: #f8fbff;
+    }
+    footer { text-align: center; color: var(--muted); padding: 34px 20px 56px; font-size: .92rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="mark"><span>✦</span></div>
+    <h1>KPCC 사진 갤러리</h1>
+    <p class="lead">교회의 예배, 섬김, 교제의 순간을 모아두는 사진 공간입니다. 텔레그램 KPCC HOMEPAGE 봇으로 사진을 보내면 이곳에 업데이트됩니다.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="toolbar">
+        <div>
+          <div class="eyebrow">Church Gallery</div>
+          <h2>최근 사진</h2>
+        </div>
+        <div class="count" id="count">사진을 불러오는 중...</div>
+      </div>
+      <div class="grid" id="gallery"></div>
+    </section>
+  </main>
+
+  <footer>KPCC HOMEPAGE · 사진 업로드 자동화 테스트</footer>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+    const count = document.getElementById('count');
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+    }
+
+    fetch('./gallery.json?ts=' + Date.now())
+      .then(res => res.ok ? res.json() : [])
+      .then(items => {
+        const photos = Array.isArray(items) ? items : [];
+        count.textContent = photos.length ? `총 ${photos.length}장` : '아직 등록된 사진이 없습니다';
+        if (!photos.length) {
+          gallery.innerHTML = '<div class="empty">아직 사진이 없습니다.<br />텔레그램 KPCC HOMEPAGE 봇으로 사진을 보내 테스트해 주세요.</div>';
+          return;
+        }
+        gallery.innerHTML = photos.map(item => `
+          <article class="card">
+            <a href="${escapeHtml(item.src)}" target="_blank" rel="noopener">
+              <img class="photo" src="${escapeHtml(item.thumb || item.src)}" alt="${escapeHtml(item.caption || '교회 사진')}" loading="lazy" />
+              <div class="body">
+                <div class="date">${escapeHtml(item.date || '')}</div>
+                <p class="caption">${escapeHtml(item.caption || 'KPCC 교회 사진')}</p>
+              </div>
+            </a>
+          </article>`).join('');
+      })
+      .catch(() => {
+        count.textContent = '사진을 불러오지 못했습니다';
+        gallery.innerHTML = '<div class="empty">갤러리 데이터를 불러오지 못했습니다.</div>';
+      });
+  </script>
+</body>
+</html>
