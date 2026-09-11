@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KPCC 사진 갤러리</title>
-  <meta name="description" content="KPCC 교회 홈페이지 사진 갤러리" />
+  <title>KPCC 5min Sermon | 신시내티한인장로교회</title>
+  <meta name="description" content="신시내티한인장로교회 5분설교 YouTube 자동화와 교회 사진 갤러리" />
   <style>
     :root {
       color-scheme: light;
@@ -82,6 +82,8 @@
     .eyebrow { color: var(--blue); font-weight: 800; letter-spacing: .08em; font-size: .78rem; text-transform: uppercase; }
     h2 { margin: 5px 0 0; font-size: clamp(1.5rem, 3vw, 2.25rem); letter-spacing: -.03em; }
     .count { color: var(--muted); font-size: .95rem; }
+    .app-info { margin: 0 0 22px; padding: 18px 20px; border-radius: 18px; background: #f4f9ff; border: 1px solid var(--line); color: #344054; line-height: 1.7; }
+    .app-info a { color: var(--blue); font-weight: 700; margin-right: 16px; }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -131,6 +133,11 @@
           <h2>최근 사진</h2>
         </div>
         <div class="count" id="count">사진을 불러오는 중...</div>
+      </div>
+      <div class="app-info">
+        <strong>KPCC 5min Sermon</strong>은 신시내티한인장로교회가 예배 설교 영상을 YouTube에 업로드하고 관리하기 위한 교회 운영 서비스입니다. YouTube 채널의 동영상 제목, 설명, 썸네일 및 공개 상태를 관리하는 데 Google 계정 권한을 사용합니다.<br />
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/terms.html">서비스 약관</a>
       </div>
       <div class="grid" id="gallery"></div>
     </section>
